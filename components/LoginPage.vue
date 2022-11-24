@@ -1,4 +1,3 @@
-
 <template class="bg-gradient-primary">
   <div class="container">
     <div class="row justify-content-center">
@@ -57,7 +56,16 @@
   </div>
 </template>
 
-<script src="static/js/jquery.min.js"></script>
-<script src="static/js/bootstrap.min.js"></script>
-<script src="static/js/bs-init.js"></script>
-<script src="static/js/theme.js"></script>
+<!--script>
+export default {
+  head () {
+    return {
+      script: [
+        {
+          src: '/static/js/jquery.min.js', '/static/js/bootstrap.min.js': '/static/js/bs-init.js', '/static/js/theme.js'
+        }
+      ]
+    }
+  }
+}
+</script-->

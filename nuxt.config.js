@@ -13,12 +13,15 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: '/css/bootstrap.min.css' }
+      { rel: 'stylesheet', href: '/css/bootstrap.min.css' },
+      { rel: 'script', href: '/js/boostrap.min.js' },
+      { rel: 'script', href: '/js/jquery.min.js' },
+      { rel: 'script', href: '/js/bs-init.js' },
+      { rel: 'script', href: '/js/theme.js' }
     ],
     script: [{
-      src: '/js/boostrap.min.js',
-      type: 'text/javascript'
-      /** src: '/js/bs-init.js'src: '/js/chart.min.js',src: '/js/jquery.min.js', src: '/js/theme.js', **/
+      type: 'text/javascript',
+      src: '~/js/boostrap.min.js'
     }],
     build: {
       extractCSS: true
