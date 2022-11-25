@@ -18,7 +18,7 @@
                   <form class="user">
                     <div class="mb-3">
                       <input
-                        id="exampleInputEmail"
+                        id="email"
                         class="form-control form-control-user"
                         type="email"
                         aria-describedby="emailHelp"
@@ -28,23 +28,25 @@
                     </div>
                     <div class="mb-3">
                       <input
-                        id="exampleInputPassword"
+                        id="password"
                         class="form-control form-control-user"
                         type="password"
                         placeholder="Password"
                         name="password"
                       >
                     </div>
-                    <button
-                      class="btn btn-primary d-block btn-user w-100"
-                      type="submit"
-                      style="
+                    <NuxtLink to="/dashboard">
+                      <button
+                        class="btn btn-primary d-block btn-user w-100"
+                        type="submit"
+                        style="
                         background: var(--bs-btn-hover-bg);
                         color: var(--bs-btn-hover-color);
                         border-radius: 15px;"
-                    >
-                      Login
-                    </button>
+                      >
+                        Login
+                      </button>
+                    </NuxtLink>
                   </form>
                 </div>
               </div>
@@ -56,16 +58,33 @@
   </div>
 </template>
 
-<!--script>
+<script>
 export default {
-  head () {
+  // name: 'Login'
+  data () {
     return {
-      script: [
-        {
-          src: '/static/js/jquery.min.js', '/static/js/bootstrap.min.js': '/static/js/bs-init.js', '/static/js/theme.js'
-        }
-      ]
+      email: 'admin@foodthrift.com',
+      password: 'foodthriftAdmin'
     }
+  },
+  login () {
+    if (this.emailLogin === '' || this.passwordLogin === '') {
+      this.emptyFields = true
+    } else {
+      alert('You are now logged in')
+    }
+  },
+  submitForm (email, password) {
+    this.$emit('submit', { email, password })
+    alert(JSON.stringify(this.form))
+  },
+  onreset (event) {
+    this.form.email = ''
+    this.form.password = ''
+    this.show = false
+    this.$nextTick(() => {
+      this.show = true
+    })
   }
 }
-</script-->
+</script>
