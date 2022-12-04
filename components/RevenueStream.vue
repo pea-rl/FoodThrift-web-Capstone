@@ -5,12 +5,14 @@
       <div id="content">
         <NavBar />
         <div class="container-fluid">
-          <div
-            class="d-sm-flex justify-content-between align-items-center mb-4"
-          >
-            <h3 class="text-dark mb-0">
-              Revenue Stream
-            </h3>
+          <div style="margin: 7px;">
+            <div class="row">
+              <div class="col">
+                <h3 class="text-dark mb-1" style="text-align: center;font-family: Biryani, sans-serif;font-weight: bold;padding: 9px;margin: 5px;">
+                  REVENUE STREAM
+                </h3>
+              </div>
+            </div>
           </div>
           <div class="row">
             <div class="col-md-6 col-xl-3 mb-4">
