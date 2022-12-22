@@ -186,19 +186,19 @@ export default {
       });
   methods: {
     openModal() {
-      this.showModal = true;
+      this.showModal = true
       // Select the modal using the $refs property in Vue.js
-      const modal = this.$refs.modal;
+      const modal = this.$refs.modal
 
       // Open the modal
-      modal.style.display = 'block';
+      modal.style.display = 'block'
     };
     closeModal() {
-      this.showModal = false;
+      this.showModal = false
     };
     async campApprv() {
-      this.approvedCamp = true;
-    }
+      this.approvedCamp = true
+    };
   }
 }}
 // Set up a listener for changes to the event data in the Firebase Realtime Database
