@@ -71,7 +71,7 @@
                               Beneficiary: {{ item.CampBnfcry }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Schedule: {{ item.CampSched }}
+                              Schedule: {{ item.CampSchedStart }} - {{ item.CampSchedEnd }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
                               Food Date Prepared: {{ item.CampFdDatePrep }}
@@ -89,9 +89,9 @@
                             </div>
                             <div class="text-center" style="margin: 6px;position: relative;padding: 7px;margin-top: 56px;padding-bottom: -8px;">
                               <div class="btn-group d-xl-flex align-content-center align-self-center m-auto justify-content-xl-center align-items-xl-center" role="group" style="width: 190.641px;margin: 4px;padding: 6px;">
-                                <button class="btn btn-primary text-center" type="button" style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;">
+                                <button class="btn btn-primary text-center" type="button" style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;" @click="campApprv" :disabled="approvedCamp">
                                   Approve
-                                </button><button class="btn btn-primary text-center" type="button" style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);">
+                                </button><button class="btn btn-primary text-center" type="button" style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);" @click="campRejct" :disabled="rejectedCamp">
                                   Reject
                                 </button>
                               </div>
@@ -144,28 +144,63 @@
 // eslint-disable-next-line import/default
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-
 import 'firebase/database'
 import { GoogleAuth, GoogleApis } from 'google-auth-library'
 import { google } from 'googleapis'
 
-import FullCalendar from 'fullcalendar'
-
 import SideBar from './inc/SideBar.vue'
 import NavBar from './inc/NavBar.vue'
 
-firebase.initializeApp(firebase)
-const database = firebase.database()
+firebase.initializeApp(config);
+const database = firebase.database();
 
 // Authenticate with the Google Calendar API
 const auth = new GoogleAuth({
   keyFile: '/path/to/keyfile.json',
   scopes: ['https://www.googleapis.com/auth/calendar']
 });
-const client = await auth.getClient()
-const token = await auth.getAccessToken()
-// const calendar = google.calendar({ version: 'v3', auth: client });
+const client = await auth.getClient();
+const token = await auth.getAccessToken();
+const calendar = google.calendar({ version: 'v3', auth: client });
 
+export default {
+  components: { SideBar, NavBar },
+  data () {
+    return {
+      showModal: false,
+      items: [],
+      approvedCamp: false,
+      rejectedCamp: false
+    };
+  },
+  created () {
+    // Initialize Firebase = is in nuxt.config.js
+    const firebaseApp = firebase.initializeApp(config);
+
+    // Get the data from the 'items' collection in Firestore
+    const firestore = firebaseApp.firestore();
+    firestore.collection('items').get()
+      .then((querySnapshot) => {
+        // Map the data to an array of objects
+        this.items = querySnapshot.docs.map(doc => doc.data());
+      });
+  methods: {
+    openModal() {
+      this.showModal = true;
+      // Select the modal using the $refs property in Vue.js
+      const modal = this.$refs.modal;
+
+      // Open the modal
+      modal.style.display = 'block';
+    };
+    closeModal() {
+      this.showModal = false;
+    };
+    async campApprv() {
+      this.approvedCamp = true;
+    }
+  }
+}}
 // Set up a listener for changes to the event data in the Firebase Realtime Database
 database.ref('events').on('value', (snapshot) => {
   const events = snapshot.val();
@@ -176,99 +211,22 @@ database.ref('events').on('value', (snapshot) => {
   for (const event of eventsOnCalendar.data.items) {
     await calendar.events.delete({ calendarId, eventId: event.id });
   }
-
-const firebaseApp = firebase.initializeApp(firebase)
-const firestore = firebaseApp.firestore()
-
-// Get the data from the 'items' collection in Firestore
-firestore.collection('items').get()
-  .then((querySnapshot) => {
-    // Create the table rows
-    let rows = ''
-    querySnapshot.forEach((doc) => {
-      rows += `<tr><td>${doc.data().name}</td><td>${doc.data().value}</td></tr>`
-    })
-
-    // Set the table rows in the table
-    document.getElementById('table-body').innerHTML = rows
-  })
-
-// Initialize the calendar
-const calendarEl = document.getElementById('calendar')
-const calendar = new FullCalendar.Calendar(calendarEl, {
-  // Add options here, such as the default view, events, and so on
-
-  // Add the new events to the calendar
-  for (const event of events) {
-    await calendar.events.insert({
-      calendarId,
-      resource: {
-        summary: event.item.CampTitle,
-        start: {
-          date: event.item.CampSched
-        },
-        end: {
-          date: event.endDate
-        }
+  if (this.approvedCamp == true) {
+      // Add the new events to the calendar
+    for (const event of events) {
+        await calendar.events.insert({
+          calendarId,
+          resource: {
+            summary: event.item.CampTitle,
+            start: {
+              date: event.item.CampSchedStart
+            },
+            end: {
+              date: event.item.CampSchedEnd
+            }
+          }
+        });
       }
-    });
   }
-})
-})
-
-// Render the calendar
-calendar.render()
-
-export default {
-  components: { SideBar, NavBar },
-  data () {
-    return {
-      showModal: false,
-      items: []
-    }
-  },
-  created () {
-    // Initialize Firebase
-    const firebaseConfig = {
-      // Your Firebase configuration
-    }
-    const firebaseApp = firebase.initializeApp(firebaseConfig)
-
-    // Get the data from the 'items' collection in Firestore
-    const firestore = firebaseApp.firestore()
-    firestore.collection('items').get()
-      .then((querySnapshot) => {
-        // Map the data to an array of objects
-        this.items = querySnapshot.docs.map(doc => doc.data())
-      })
-
-    // google calendar
-    const { GoogleAuth } = require('google-auth-library')
-    const auth = new GoogleAuth({
-      keyFile: '/path/to/keyfile.json',
-      scopes: ['https://www.googleapis.com/auth/calendar']
-    })
-    const client = auth.getClient()
-    const token = auth.getAccessToken()
-    const { google } = require('googleapis')
-
-    const calendars = calendar.calendarList.list()
-
-    const calendarId = 'primary' // replace with the calendar ID
-    const events = calendar.events.list({ calendarId })
-  },
-  methods: {
-    openModal () {
-      this.showModal = true
-      // Select the modal using the $refs property in Vue.js
-      const modal = this.$refs.modal
-
-      // Open the modal
-      modal.style.display = 'block'
-    },
-    closeModal () {
-      this.showModal = false
-    }
-  }
-}
+});
 </script>
