@@ -6,6 +6,7 @@
         <NavBar />
 
         <div class="container-fluid d-grid float-none">
+          <!--title-->
           <div style="margin: 7px;">
             <div class="row">
               <div class="col">
@@ -16,6 +17,7 @@
             </div>
           </div>
         </div>
+        <!--data table-->
         <div class="container d-grid flex-wrap">
           <div style="padding: 13px;">
             <div class="row" style="min-width: 100px;">
@@ -29,11 +31,8 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Campaign 8</td>
-                        </tr>
-                        <tr>
-                          <td>Campaign10</td>
+                        <tr v-for="item in items" :key="item" @click="openModal(item)">
+                          <td>{{ item.CampTitle }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -41,43 +40,51 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col">
+            <!--Modal-->
+            <div v-show="showModal" id="modal" ref="modal" class="row">
+              <div id="modal-content" class="col">
                 <div id="modal-1" class="modal fade" role="dialog" tabindex="-1">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header" style="background: #f4f4f4;">
                         <h4 style="margin: 0px;padding: 6px;color: rgb(60,61,68);">
-                          Title
-                        </h4><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                          Title: {{ item.CampTitle }}
+                        </h4><button
+                          id="close"
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                          @click="closeModal"
+                        />
                       </div>
                       <div class="col">
                         <div class="card" style="background: #f4f4f4;color: rgb(41,41,48);">
                           <div class="card-body">
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Date:
+                              Date: {{ item.CampDateSubmtd }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Address:
+                              Address: {{ item.CampAdrs }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Beneficiary:
+                              Beneficiary: {{ item.CampBnfcry }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Schedule:&nbsp;
+                              Schedule: {{ item.CampSched }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Food Date Prepared:
+                              Food Date Prepared: {{ item.CampFdDatePrep }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Food Date Expiry:
+                              Food Date Expiry: {{ item.CampFdDateExp }}
                             </h6>
                             <div>
                               <h6 style="margin: 5px;padding: 3px;font-size: 15px;">
                                 Description:
                               </h6>
                               <p style="margin: 5px;padding: 8px;font-size: 12px;">
-                                Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.&nbsp;<br>Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.<br>
+                                {{ item.CampDescrip }}
                               </p>
                             </div>
                             <div class="text-center" style="margin: 6px;position: relative;padding: 7px;margin-top: 56px;padding-bottom: -8px;">
@@ -100,6 +107,7 @@
             </div>
           </div>
         </div>
+        <!--Calendar-->
         <div class="row" style="margin: 10px;">
           <div class="col">
             <div>
@@ -112,7 +120,7 @@
                   </div>
                   <div style="margin: 0px;padding: 10px;">
                     <div class="row">
-                      <div class="col" />
+                      <div id="calendar" class="col" />
                     </div>
                   </div>
                 </div>
@@ -133,9 +141,134 @@
 </template>
 
 <script>
+// eslint-disable-next-line import/default
+import firebase from 'firebase/app'
+import 'firebase/firestore'
+
+import 'firebase/database'
+import { GoogleAuth, GoogleApis } from 'google-auth-library'
+import { google } from 'googleapis'
+
+import FullCalendar from 'fullcalendar'
+
 import SideBar from './inc/SideBar.vue'
 import NavBar from './inc/NavBar.vue'
+
+firebase.initializeApp(firebase)
+const database = firebase.database()
+
+// Authenticate with the Google Calendar API
+const auth = new GoogleAuth({
+  keyFile: '/path/to/keyfile.json',
+  scopes: ['https://www.googleapis.com/auth/calendar']
+});
+const client = await auth.getClient()
+const token = await auth.getAccessToken()
+// const calendar = google.calendar({ version: 'v3', auth: client });
+
+// Set up a listener for changes to the event data in the Firebase Realtime Database
+database.ref('events').on('value', (snapshot) => {
+  const events = snapshot.val();
+
+  // Delete all events on the calendar
+  const calendarId = 'primary'; // replace with the calendar ID
+  const eventsOnCalendar = await calendar.events.list({ calendarId });
+  for (const event of eventsOnCalendar.data.items) {
+    await calendar.events.delete({ calendarId, eventId: event.id });
+  }
+
+const firebaseApp = firebase.initializeApp(firebase)
+const firestore = firebaseApp.firestore()
+
+// Get the data from the 'items' collection in Firestore
+firestore.collection('items').get()
+  .then((querySnapshot) => {
+    // Create the table rows
+    let rows = ''
+    querySnapshot.forEach((doc) => {
+      rows += `<tr><td>${doc.data().name}</td><td>${doc.data().value}</td></tr>`
+    })
+
+    // Set the table rows in the table
+    document.getElementById('table-body').innerHTML = rows
+  })
+
+// Initialize the calendar
+const calendarEl = document.getElementById('calendar')
+const calendar = new FullCalendar.Calendar(calendarEl, {
+  // Add options here, such as the default view, events, and so on
+
+  // Add the new events to the calendar
+  for (const event of events) {
+    await calendar.events.insert({
+      calendarId,
+      resource: {
+        summary: event.item.CampTitle,
+        start: {
+          date: event.item.CampSched
+        },
+        end: {
+          date: event.endDate
+        }
+      }
+    });
+  }
+})
+})
+
+// Render the calendar
+calendar.render()
+
 export default {
-  components: { SideBar, NavBar }
+  components: { SideBar, NavBar },
+  data () {
+    return {
+      showModal: false,
+      items: []
+    }
+  },
+  created () {
+    // Initialize Firebase
+    const firebaseConfig = {
+      // Your Firebase configuration
+    }
+    const firebaseApp = firebase.initializeApp(firebaseConfig)
+
+    // Get the data from the 'items' collection in Firestore
+    const firestore = firebaseApp.firestore()
+    firestore.collection('items').get()
+      .then((querySnapshot) => {
+        // Map the data to an array of objects
+        this.items = querySnapshot.docs.map(doc => doc.data())
+      })
+
+    // google calendar
+    const { GoogleAuth } = require('google-auth-library')
+    const auth = new GoogleAuth({
+      keyFile: '/path/to/keyfile.json',
+      scopes: ['https://www.googleapis.com/auth/calendar']
+    })
+    const client = auth.getClient()
+    const token = auth.getAccessToken()
+    const { google } = require('googleapis')
+
+    const calendars = calendar.calendarList.list()
+
+    const calendarId = 'primary' // replace with the calendar ID
+    const events = calendar.events.list({ calendarId })
+  },
+  methods: {
+    openModal () {
+      this.showModal = true
+      // Select the modal using the $refs property in Vue.js
+      const modal = this.$refs.modal
+
+      // Open the modal
+      modal.style.display = 'block'
+    },
+    closeModal () {
+      this.showModal = false
+    }
+  }
 }
 </script>

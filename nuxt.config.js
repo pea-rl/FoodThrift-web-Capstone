@@ -1,4 +1,13 @@
+// import firebase from '@nuxtjs/firebase'
+import * as firebase from 'firebase'
+
 export default {
+  // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
+  ssr: false,
+
+  // Target: https://go.nuxtjs.dev/config-target
+  target: 'static',
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'FoodThrift',
@@ -45,7 +54,9 @@ export default {
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module'
   ],
-
+  router: {
+    middleware: ['auth']
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
@@ -54,24 +65,37 @@ export default {
     '@nuxtjs/axios',
     // firebase config
     [
-      '@nuxtjs/firebase',
-      {
+      '@nuxtjs/firebase', {
         config: {
-          apiKey: '<apiKey>',
-          authDomain: '<authDomain>',
-          projectId: '<projectId>',
-          storageBucket: '<storageBucket',
-          messagingSenderId: '<messagingSenderId',
-          appId: '<appId>',
-          measurementId: '<measurementId>'
+          apiKey: 'AIzaSyC62rsKg8c3KhBRbcPutMhOW2OiSMp1qao',
+          authDomain: 'foodthrift-4ad15.firebaseapp.com',
+          projectId: 'foodthrift-4ad15',
+          storageBucket: 'foodthrift-4ad15.appspot.com',
+          messagingSenderId: '665845356427',
+          appId: '1:665845356427:web:706e2173a4659e830cc18e',
+          measurementId: 'G-H2VV3HMJSB'
         },
         services: {
-          auth: true
+          auth: {
+            persistence: 'local', // default
+            initialize: {
+              onAuthStateChangedAction: 'onAuthStateChangedAction',
+              subscribeManually: false
+            },
+            firestore: true,
+            functions: true,
+            storage: true,
+            database: true,
+            messaging: true,
+            performance: true,
+            analytics: true,
+            remoteConfig: true
+          },
+          ssr: false // default
         }
       }
     ]
   ],
-
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
@@ -82,3 +106,6 @@ export default {
   build: {
   }
 }
+
+// Initialize the Firebase app.
+firebase.initializeApp(process.env.firebase)

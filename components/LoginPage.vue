@@ -59,32 +59,35 @@
 </template>
 
 <script>
+// import {firebase} from 'firebase/app'
+import 'firebase/auth'
+import * as firebase from 'firebase'
+import { router } from 'nuxt-router'
+
+const email = 'admin@foodthrift.com'
+const password = 'foodthriftAdmin'
+
+firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
+  // login success
+  router.push('/dashboard')
+}).catch((error) => {
+  // errors
+  // console.error(error)
+  if (error.email === 'auth/user-not-found') {
+    // user not found
+    alert('Invalid email address')
+  } else if (error.password === 'auth/wrong-password') {
+    // wrong password
+    alert('Invalid password')
+  }
+})
+
 export default {
   // name: 'Login'
   data () {
     return {
-      email: 'admin@foodthrift.com',
-      password: 'foodthriftAdmin'
+
     }
-  },
-  login () {
-    if (this.emailLogin === '' || this.passwordLogin === '') {
-      this.emptyFields = true
-    } else {
-      alert('You are now logged in')
-    }
-  },
-  submitForm (email, password) {
-    this.$emit('submit', { email, password })
-    alert(JSON.stringify(this.form))
-  },
-  onreset (event) {
-    this.form.email = ''
-    this.form.password = ''
-    this.show = false
-    this.$nextTick(() => {
-      this.show = true
-    })
   }
 }
 </script>
