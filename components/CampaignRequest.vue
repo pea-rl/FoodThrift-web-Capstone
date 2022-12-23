@@ -32,7 +32,7 @@
                       </thead>
                       <tbody>
                         <tr v-for="item in items" :key="item" @click="openModal(item)">
-                          <td>{{ item.CampTitle }}</td>
+                          <td>{{ item.campReqId.CampTitle }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -74,10 +74,7 @@
                               Schedule: {{ item.CampSchedStart }} - {{ item.CampSchedEnd }}
                             </h6>
                             <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Food Date Prepared: {{ item.CampFdDatePrep }}
-                            </h6>
-                            <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Food Date Expiry: {{ item.CampFdDateExp }}
+                              Location: {{ item.CampLocatn }}
                             </h6>
                             <div>
                               <h6 style="margin: 5px;padding: 3px;font-size: 15px;">
@@ -145,8 +142,9 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/database'
-import { GoogleAuth, GoogleApis } from 'google-auth-library'
-import { google } from 'googleapis'
+import { GoogleAuth } from 'google-auth-library'
+import 'googleapis'
+import * as FullCalendar from 'fullcalendar'
 
 import SideBar from './inc/SideBar.vue'
 import NavBar from './inc/NavBar.vue'
@@ -154,14 +152,8 @@ import NavBar from './inc/NavBar.vue'
 firebase.initializeApp(firebase)
 const database = firebase.database()
 
-// Authenticate with the Google Calendar API
-const auth = new GoogleAuth({
-  keyFile: '/path/to/keyfile.json',
-  scopes: ['https://www.googleapis.com/auth/calendar']
-})
-const client = await auth.getClient()
-const token = await auth.getAccessToken()
-const calendar = google.calendar({ version: 'v3', auth: client })
+const { google } = require('googleapis')
+// const { OAuth2Client } = require('google-auth-library')
 
 export default {
   components: { SideBar, NavBar },
@@ -175,7 +167,7 @@ export default {
   },
   created () {
     // Initialize Firebase = is in nuxt.config.js
-    const firebaseApp = firebase.initializeApp(config)
+    const firebaseApp = firebase.initializeApp(process.env.firebase)
 
     // Get the data from the 'items' collection in Firestore
     const firestore = firebaseApp.firestore()
@@ -199,7 +191,7 @@ export default {
     async campApprv () {
       this.approvedCamp = true
       const database = firebase.database()
-      const campReqId = this.item.campReqId
+      // const campReqId = this.item.campReqId
       await database.ref(this.item.campReqId.update({
         status: this.item.campApprv = true
       }))
@@ -207,12 +199,30 @@ export default {
     async campRejct () {
       this.rejectedCamp = true
       const database = firebase.database()
-      const campReqId = this.item.campReqId
+      // const campReqId = this.item.campReqId
       await database.ref(this.item.campReqId.update({
         status: this.item.campRejct = true
       }))
     },
     mounted () {
+      // Authenticate with the Google Calendar API
+      const auth = new GoogleAuth({
+        keyFile: '/path/to/keyfile.json',
+        scopes: ['https://www.googleapis.com/auth/calendar']
+      })
+      /* const client = new OAuth2Client({
+        clientId: 'your-client-id',
+        clientSecret: 'your-client-secret'
+      }) */
+
+      // Initialize the calendar
+      const calendarEl = document.getElementById('calendar')
+      const calendar = google.calendar({ version: 'v3', auth })
+      FullCalendar.Calendar(calendarEl, {
+        // events data retrieved from the Google Calendar API
+        events: this.events
+      })
+
       // Set up a listener for changes to the event data in the Firebase Realtime Database
       database.ref('events').on('value', (snapshot) => {
         this.events = snapshot.val()
@@ -226,17 +236,21 @@ export default {
         }
         if (this.item.campReqId.campApprv === true) {
           // Add the new events to the calendar
-          for (const event of events) {
+          for (const event of 'events') {
             // await
             calendar.events.insert({
               calendarId,
               resource: {
-                summary: event.item.CampTitle,
+                summary: event.item.campReqId.CampTitle,
+                location: event.item.CampLocatn,
+                description: event.item.CampDescrip,
                 start: {
-                  date: event.item.CampSchedStart
+                  date: event.item.CampSchedStart,
+                  timeZone: 'GMT+8'
                 },
                 end: {
-                  date: event.item.CampSchedEnd
+                  date: event.item.CampSchedEnd,
+                  timeZone: 'GMT+8'
                 }
               }
             })
