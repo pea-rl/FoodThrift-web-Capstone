@@ -186,65 +186,65 @@ export default {
       })
   },
   methods: {
-      openModal () {
-        this.showModal = true
-        // Select the modal using the $refs property in Vue.js
-        const modal = this.$refs.modal
-        // Open the modal
-        modal.style.display = 'block'
-      },
-      closeModal () {
-        this.showModal = false
-      },
-      campApprv () {
-        this.approvedCamp = true
-        const database = firebase.database()
-        const campReqId = item.campReqId
-        // await
-        database.ref(item.campReqId.update({
-          status: campApprv = true
-        }))
-      },
-      campRejct () {
-        this.rejectedCamp = true
-        const database = firebase.database()
-        const campReqId = item.campReqId
-        // await
-        database.ref(this.item.campReqId.update({
-          status: this.item.campRejct = true
-        }))
-      }
+    openModal () {
+      this.showModal = true
+      // Select the modal using the $refs property in Vue.js
+      const modal = this.$refs.modal
+      // Open the modal
+      modal.style.display = 'block'
     },
-  // Set up a listener for changes to the event data in the Firebase Realtime Database
-  database.ref('events').on('value', (snapshot) => {
-    const events = snapshot.val()
+    closeModal () {
+      this.showModal = false
+    },
+    async campApprv () {
+      this.approvedCamp = true
+      const database = firebase.database()
+      const campReqId = item.campReqId
+      await database.ref(item.campReqId.update({
+        status: campApprv = true
+      }))
+    },
+    async campRejct () {
+      this.rejectedCamp = true
+      const database = firebase.database()
+      const campReqId = item.campReqId
+      await database.ref(this.item.campReqId.update({
+        status: this.item.campRejct = true
+      }))
+    },
+    mounted () {
+      // Set up a listener for changes to the event data in the Firebase Realtime Database
+      database.ref('events').on('value', (snapshot) => {
+        this.events = snapshot.val()
 
-    // Delete all events on the calendar
-    const calendarId = 'primary' // replace with the calendar ID
-    const eventsOnCalendar = /** await */ calendar.events.list({ calendarId })
-    for (const event of eventsOnCalendar.data.items) {
-      // await
-      calendar.events.delete({ calendarId, eventId: event.id })
-    }
-    if (this.item.campReqId.campApprv === true) {
-      // Add the new events to the calendar
-      for (const event of events) {
-        // await
-        calendar.events.insert({
-          calendarId,
-          resource: {
-            summary: event.item.CampTitle,
-            start: {
-              date: event.item.CampSchedStart
-            },
-            end: {
-              date: event.item.CampSchedEnd
-            }
+        // Delete all events on the calendar
+        const calendarId = 'primary' // replace with the calendar ID
+        const eventsOnCalendar = /** await */ calendar.events.list({ calendarId })
+        for (const event of eventsOnCalendar.data.items) {
+          // await
+          calendar.events.delete({ calendarId, eventId: event.id })
+        }
+        if (this.item.campReqId.campApprv === true) {
+          // Add the new events to the calendar
+          for (const event of events) {
+            // await
+            calendar.events.insert({
+              calendarId,
+              resource: {
+                summary: event.item.CampTitle,
+                start: {
+                  date: event.item.CampSchedStart
+                },
+                end: {
+                  date: event.item.CampSchedEnd
+                }
+              }
+            })
           }
-        })
-      }
+        }
+      })
     }
-  })
+  }
 
 }
 </script>
