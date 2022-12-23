@@ -196,8 +196,21 @@ export default {
     closeModal() {
       this.showModal = false
     };
-    async campApprv() {
+    campApprv() {
       this.approvedCamp = true
+      const database = firebase.database();
+      const campReqId = item.campReqId
+      await database.ref(item.campReqId/${campReqId}.update({
+        status: campApprv = true
+      }))
+    };
+    rejectedCamp() {
+      this.rejectedCamp = true
+      const database = firebase.database();
+      const campReqId = item.campReqId
+      await database.ref(item.campReqId/${campReqId}.update({
+        status: campRejct = true
+      }))
     };
   }
 }}
@@ -211,7 +224,7 @@ database.ref('events').on('value', (snapshot) => {
   for (const event of eventsOnCalendar.data.items) {
     await calendar.events.delete({ calendarId, eventId: event.id });
   }
-  if (this.approvedCamp == true) {
+  if (this.item.campReqId.campApprv == true) {
       // Add the new events to the calendar
     for (const event of events) {
         await calendar.events.insert({
