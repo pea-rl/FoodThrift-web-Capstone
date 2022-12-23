@@ -48,7 +48,7 @@
                     <div class="modal-content">
                       <div class="modal-header" style="background: #f4f4f4;">
                         <h4 style="margin: 0px;padding: 6px;color: rgb(60,61,68);">
-                          Title: {{ item.CampTitle }}
+                          Title: {{ item.campReqId.CampTitle }}
                         </h4><button
                           id="close"
                           type="button"
@@ -89,9 +89,9 @@
                             </div>
                             <div class="text-center" style="margin: 6px;position: relative;padding: 7px;margin-top: 56px;padding-bottom: -8px;">
                               <div class="btn-group d-xl-flex align-content-center align-self-center m-auto justify-content-xl-center align-items-xl-center" role="group" style="width: 190.641px;margin: 4px;padding: 6px;">
-                                <button class="btn btn-primary text-center" type="button" style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;" @click="campApprv" :disabled="approvedCamp">
+                                <button class="btn btn-primary text-center" type="button" style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;" :disabled="approvedCamp" @click="campApprv">
                                   Approve
-                                </button><button class="btn btn-primary text-center" type="button" style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);" @click="campRejct" :disabled="rejectedCamp">
+                                </button><button class="btn btn-primary text-center" type="button" style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);" :disabled="rejectedCamp" @click="campRejct">
                                   Reject
                                 </button>
                               </div>
@@ -151,17 +151,17 @@ import { google } from 'googleapis'
 import SideBar from './inc/SideBar.vue'
 import NavBar from './inc/NavBar.vue'
 
-firebase.initializeApp(config);
-const database = firebase.database();
+firebase.initializeApp(config)
+const database = firebase.database()
 
 // Authenticate with the Google Calendar API
 const auth = new GoogleAuth({
   keyFile: '/path/to/keyfile.json',
   scopes: ['https://www.googleapis.com/auth/calendar']
-});
-const client = await auth.getClient();
-const token = await auth.getAccessToken();
-const calendar = google.calendar({ version: 'v3', auth: client });
+})
+const client = await auth.getClient()
+const token = await auth.getAccessToken()
+const calendar = google.calendar({ version: 'v3', auth: client })
 
 export default {
   components: { SideBar, NavBar },
@@ -171,63 +171,66 @@ export default {
       items: [],
       approvedCamp: false,
       rejectedCamp: false
-    };
+    }
   },
   created () {
     // Initialize Firebase = is in nuxt.config.js
-    const firebaseApp = firebase.initializeApp(config);
+    const firebaseApp = firebase.initializeApp(config)
 
     // Get the data from the 'items' collection in Firestore
-    const firestore = firebaseApp.firestore();
+    const firestore = firebaseApp.firestore()
     firestore.collection('items').get()
       .then((querySnapshot) => {
         // Map the data to an array of objects
-        this.items = querySnapshot.docs.map(doc => doc.data());
-      });
+        this.items = querySnapshot.docs.map(doc => doc.data())
+      })
+  },
   methods: {
-    openModal() {
-      this.showModal = true
-      // Select the modal using the $refs property in Vue.js
-      const modal = this.$refs.modal
+      openModal () {
+        this.showModal = true
+        // Select the modal using the $refs property in Vue.js
+        const modal = this.$refs.modal
+        // Open the modal
+        modal.style.display = 'block'
+      },
+      closeModal () {
+        this.showModal = false
+      },
+      campApprv () {
+        this.approvedCamp = true
+        const database = firebase.database()
+        const campReqId = item.campReqId
+        // await
+        database.ref(item.campReqId.update({
+          status: campApprv = true
+        }))
+      },
+      campRejct () {
+        this.rejectedCamp = true
+        const database = firebase.database()
+        const campReqId = item.campReqId
+        // await
+        database.ref(this.item.campReqId.update({
+          status: this.item.campRejct = true
+        }))
+      }
+    },
+  // Set up a listener for changes to the event data in the Firebase Realtime Database
+  database.ref('events').on('value', (snapshot) => {
+    const events = snapshot.val()
 
-      // Open the modal
-      modal.style.display = 'block'
-    };
-    closeModal() {
-      this.showModal = false
-    };
-    campApprv() {
-      this.approvedCamp = true
-      const database = firebase.database();
-      const campReqId = item.campReqId
-      await database.ref(item.campReqId/${campReqId}.update({
-        status: campApprv = true
-      }))
-    };
-    rejectedCamp() {
-      this.rejectedCamp = true
-      const database = firebase.database();
-      const campReqId = item.campReqId
-      await database.ref(item.campReqId/${campReqId}.update({
-        status: campRejct = true
-      }))
-    };
-  }
-}}
-// Set up a listener for changes to the event data in the Firebase Realtime Database
-database.ref('events').on('value', (snapshot) => {
-  const events = snapshot.val();
-
-  // Delete all events on the calendar
-  const calendarId = 'primary'; // replace with the calendar ID
-  const eventsOnCalendar = await calendar.events.list({ calendarId });
-  for (const event of eventsOnCalendar.data.items) {
-    await calendar.events.delete({ calendarId, eventId: event.id });
-  }
-  if (this.item.campReqId.campApprv == true) {
+    // Delete all events on the calendar
+    const calendarId = 'primary' // replace with the calendar ID
+    const eventsOnCalendar = /** await */ calendar.events.list({ calendarId })
+    for (const event of eventsOnCalendar.data.items) {
+      // await
+      calendar.events.delete({ calendarId, eventId: event.id })
+    }
+    if (this.item.campReqId.campApprv === true) {
       // Add the new events to the calendar
-    for (const event of events) {
-        await calendar.events.insert({
+      for (const event of events) {
+        // await
+        calendar.events.insert({
           calendarId,
           resource: {
             summary: event.item.CampTitle,
@@ -238,8 +241,10 @@ database.ref('events').on('value', (snapshot) => {
               date: event.item.CampSchedEnd
             }
           }
-        });
+        })
       }
-  }
-});
+    }
+  })
+
+}
 </script>
