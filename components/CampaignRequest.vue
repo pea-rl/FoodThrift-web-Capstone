@@ -151,7 +151,7 @@ import { google } from 'googleapis'
 import SideBar from './inc/SideBar.vue'
 import NavBar from './inc/NavBar.vue'
 
-firebase.initializeApp(config)
+firebase.initializeApp(firebase)
 const database = firebase.database()
 
 // Authenticate with the Google Calendar API
@@ -199,15 +199,15 @@ export default {
     async campApprv () {
       this.approvedCamp = true
       const database = firebase.database()
-      const campReqId = item.campReqId
-      await database.ref(item.campReqId.update({
-        status: campApprv = true
+      const campReqId = this.item.campReqId
+      await database.ref(this.item.campReqId.update({
+        status: this.item.campApprv = true
       }))
     },
     async campRejct () {
       this.rejectedCamp = true
       const database = firebase.database()
-      const campReqId = item.campReqId
+      const campReqId = this.item.campReqId
       await database.ref(this.item.campReqId.update({
         status: this.item.campRejct = true
       }))
