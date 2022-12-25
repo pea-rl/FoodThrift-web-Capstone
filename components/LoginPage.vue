@@ -59,10 +59,11 @@
 </template>
 
 <script>
-// import {firebase} from 'firebase/app'
-import 'firebase/auth'
-import * as firebase from 'firebase'
 import { router } from 'nuxt-router'
+// import {firebase} from 'firebase/app'
+/**
+ * import 'firebase/auth'
+import * as firebase from 'firebase'
 
 const email = 'admin@foodthrift.com'
 const password = 'foodthriftAdmin'
@@ -81,12 +82,29 @@ firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
     alert('Invalid password')
   }
 })
+ */
 
 export default {
   // name: 'Login'
   data () {
     return {
-
+      snackbar: false,
+      snackbarText: 'NO error message',
+      auth: {
+        email: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    login () {
+      const that = this
+      this.$fire.auth.signInWithEmailAndPassword(this.auth.email, this.auth.password.catch(function (error) {
+        that.snackbarText = error.message
+        that.snackbar = true
+      }).then((user) => {
+        router.push('/dashboard')
+      }))
     }
   }
 }

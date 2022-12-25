@@ -63,6 +63,7 @@ export default {
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/pwa',
     // firebase config
     [
       '@nuxtjs/firebase', {
@@ -79,19 +80,20 @@ export default {
           auth: {
             persistence: 'local', // default
             initialize: {
+              // onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
               onAuthStateChangedAction: 'onAuthStateChangedAction',
               subscribeManually: false
             },
-            firestore: true,
-            functions: true,
-            storage: true,
-            database: true,
-            messaging: true,
-            performance: true,
-            analytics: true,
-            remoteConfig: true
+            ssr: false // default
           },
-          ssr: false // default
+          firestore: true,
+          functions: true,
+          storage: true,
+          database: true,
+          messaging: true,
+          performance: true,
+          analytics: true,
+          remoteConfig: true
         }
       }
     ]
