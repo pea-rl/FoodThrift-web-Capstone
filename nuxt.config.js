@@ -1,5 +1,6 @@
 // import firebase from '@nuxtjs/firebase'
-import * as firebase from 'firebase'
+// import 'firebase'
+// import firebase from '@nuxtjs/firebase'
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -44,6 +45,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -63,10 +65,13 @@ export default {
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     // firebase config
     [
-      '@nuxtjs/firebase', {
+      '@nuxtjs/firebase',
+      {
+      // eslint-disable-next-line no-undef
         config: {
           apiKey: 'AIzaSyC62rsKg8c3KhBRbcPutMhOW2OiSMp1qao',
           authDomain: 'foodthrift-4ad15.firebaseapp.com',
@@ -80,34 +85,34 @@ export default {
           auth: {
             persistence: 'local', // default
             initialize: {
-              // onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
+            // onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
               onAuthStateChangedAction: 'onAuthStateChangedAction',
               subscribeManually: false
             },
             ssr: false // default
           },
           firestore: true,
-          functions: true,
           storage: true,
-          database: true,
-          messaging: true,
-          performance: true,
-          analytics: true,
-          remoteConfig: true
+          database: true
         }
       }
     ]
   ],
+  // PWA module configuration: https://go.nuxtjs.dev/pwa
+  pwa: {
+    manifest: {
+      lang: 'en'
+    }
+  },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     baseURL: '/'
   },
-
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   }
 }
 
 // Initialize the Firebase app.
-firebase.initializeApp(process.env.firebase)
+// firebase.(process.env.firebase)

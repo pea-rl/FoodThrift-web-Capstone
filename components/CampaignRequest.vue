@@ -86,9 +86,23 @@
                             </div>
                             <div class="text-center" style="margin: 6px;position: relative;padding: 7px;margin-top: 56px;padding-bottom: -8px;">
                               <div class="btn-group d-xl-flex align-content-center align-self-center m-auto justify-content-xl-center align-items-xl-center" role="group" style="width: 190.641px;margin: 4px;padding: 6px;">
-                                <button class="btn btn-primary text-center" type="button" style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;" :disabled="approvedCamp" @click="campApprv">
+                                <button
+                                  id="campApprove"
+                                  class="btn btn-primary text-center"
+                                  type="button"
+                                  style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;"
+                                  :disabled="approvedCamp"
+                                  @click="campApprv"
+                                >
                                   Approve
-                                </button><button class="btn btn-primary text-center" type="button" style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);" :disabled="rejectedCamp" @click="campRejct">
+                                </button><button
+                                  id="campReject"
+                                  class="btn btn-primary text-center"
+                                  type="button"
+                                  style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);"
+                                  :disabled="rejectedCamp"
+                                  @click="campRejct"
+                                >
                                   Reject
                                 </button>
                               </div>
@@ -193,7 +207,8 @@ export default {
       const database = firebase.database()
       // const campReqId = this.item.campReqId
       await database.ref(this.item.campReqId.update({
-        status: this.item.campApprv = true
+      //  this.item.campReqStat = 'Approved',
+        status: this.item.campApprove = true
       }))
     },
     async campRejct () {
@@ -201,7 +216,7 @@ export default {
       const database = firebase.database()
       // const campReqId = this.item.campReqId
       await database.ref(this.item.campReqId.update({
-        status: this.item.campRejct = true
+        status: this.item.campReject = true
       }))
     },
     mounted () {
