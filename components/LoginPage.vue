@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { router } from 'nuxt-router'
+// import 'nuxt-router'
 // import {firebase} from 'firebase/app'
 /**
  * import 'firebase/auth'
@@ -103,7 +103,7 @@ export default {
         that.snackbarText = error.message
         that.snackbar = true
       }).then((user) => {
-        router.push('/dashboard')
+        this.$nuxt.$options.router.push({ path: '/dashboard' })
       }))
     }
   }

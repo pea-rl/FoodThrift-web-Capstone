@@ -17,11 +17,9 @@
     "@nuxtjs/pwa": "^3.3.5",
     "bootstrap": "^4.6.2",
     "bootstrap-vue": "^2.22.0",
-    "child_process": "^1.0.2",
     "core-js": "^3.25.3",
     "firebase": "^8.10.1",
     "firebase-tools": "^11.19.0",
-    "fs": "^0.0.1-security",
     "fullcalendar": "^6.0.1",
     "google-auth-library": "^8.7.0",
     "googleapis": "^110.0.0",
@@ -31,7 +29,8 @@
     "tls": "^0.0.1",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
-    "vue-template-compiler": "^2.7.10"
+    "vue-template-compiler": "^2.7.10",
+    "webpack": "^4.46.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

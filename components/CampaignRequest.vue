@@ -156,7 +156,7 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/database'
-import { GoogleAuth } from 'google-auth-library'
+// import 'google-auth-library'
 import 'googleapis'
 import * as FullCalendar from 'fullcalendar'
 
@@ -220,6 +220,7 @@ export default {
       }))
     },
     mounted () {
+      const GoogleAuth = require('google-auth-library')
       // Authenticate with the Google Calendar API
       const auth = new GoogleAuth({
         keyFile: '/path/to/keyfile.json',
