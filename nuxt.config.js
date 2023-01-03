@@ -45,7 +45,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-
+    { src: '~/store/firebase.js', mode: 'client' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -56,9 +56,6 @@ export default {
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module'
   ],
-  router: {
-    middleware: ['auth']
-  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
@@ -82,15 +79,6 @@ export default {
           measurementId: 'G-H2VV3HMJSB'
         },
         services: {
-          auth: {
-            persistence: 'local', // default
-            initialize: {
-            // onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
-              onAuthStateChangedAction: 'onAuthStateChangedAction',
-              subscribeManually: false
-            },
-            ssr: false // default
-          },
           firestore: true,
           storage: true,
           database: true

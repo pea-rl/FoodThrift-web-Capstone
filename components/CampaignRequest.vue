@@ -27,12 +27,20 @@
                     <table class="table">
                       <thead>
                         <tr>
-                          <th>Title</th>
+                          <th>
+                            Campaign Titles
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="item in items" :key="item" @click="openModal(item)">
-                          <td>{{ item.campReqId.CampTitle }}</td>
+                        <tr v-for="item in campReq" :key="item.id" @click="selectItem(item)">
+                          <td>
+                            <button
+                              style="color: rgb(25,25,25); background: rgba(234,236,244,0); margin: 2px; border-radius: 0px; border: 0px none var(--bs-gray-500);"
+                            >
+                              {{ item.title }}
+                            </button>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -40,78 +48,56 @@
                 </div>
               </div>
             </div>
-            <!--Modal-->
-            <div v-show="showModal" id="modal" ref="modal" class="row">
-              <div id="modal-content" class="col">
-                <div id="modal-1" class="modal fade" role="dialog" tabindex="-1">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header" style="background: #f4f4f4;">
-                        <h4 style="margin: 0px;padding: 6px;color: rgb(60,61,68);">
-                          Title: {{ item.campReqId.CampTitle }}
-                        </h4><button
-                          id="close"
-                          type="button"
-                          class="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                          @click="closeModal"
-                        />
-                      </div>
-                      <div class="col">
-                        <div class="card" style="background: #f4f4f4;color: rgb(41,41,48);">
-                          <div class="card-body">
-                            <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Date: {{ item.CampDateSubmtd }}
-                            </h6>
-                            <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Address: {{ item.CampAdrs }}
-                            </h6>
-                            <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Beneficiary: {{ item.CampBnfcry }}
-                            </h6>
-                            <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Schedule: {{ item.CampSchedStart }} - {{ item.CampSchedEnd }}
-                            </h6>
-                            <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
-                              Location: {{ item.CampLocatn }}
-                            </h6>
-                            <div>
-                              <h6 style="margin: 5px;padding: 3px;font-size: 15px;">
-                                Description:
-                              </h6>
-                              <p style="margin: 5px;padding: 8px;font-size: 12px;">
-                                {{ item.CampDescrip }}
-                              </p>
-                            </div>
-                            <div class="text-center" style="margin: 6px;position: relative;padding: 7px;margin-top: 56px;padding-bottom: -8px;">
-                              <div class="btn-group d-xl-flex align-content-center align-self-center m-auto justify-content-xl-center align-items-xl-center" role="group" style="width: 190.641px;margin: 4px;padding: 6px;">
-                                <button
-                                  id="campApprove"
-                                  class="btn btn-primary text-center"
-                                  type="button"
-                                  style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;"
-                                  :disabled="approvedCamp"
-                                  @click="campApprv"
-                                >
-                                  Approve
-                                </button><button
-                                  id="campReject"
-                                  class="btn btn-primary text-center"
-                                  type="button"
-                                  style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);"
-                                  :disabled="rejectedCamp"
-                                  @click="campRejct"
-                                >
-                                  Reject
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer" style="background: #adccf1;" />
-                    </div>
+          </div>
+        </div>
+        <div>
+          <div v-if="selectedItem" class="col">
+            <div class="card" style="background: #f4f4f4;color: rgb(41,41,48);">
+              <div class="card-body">
+                <h5 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
+                  Title: {{ selectedItem.title }}
+                </h5>
+                <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
+                  Beneficiary: {{ selectedItem.beneficiary }}
+                </h6>
+                <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
+                  Request By: {{ selectedItem.reqBy }}
+                </h6>
+                <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
+                  Schedule: {{ selectedItem.schedStart }} - {{ selectedItem.schedEnd }}
+                </h6>
+                <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
+                  Location: {{ selectedItem.location }}
+                </h6>
+                <h6 class="card-title" style="margin: 5px;padding: 3px;font-size: 15px;">
+                  Campaign Status: {{ selectedItem.campStatus }}
+                </h6>
+                <div>
+                  <h6 style="margin: 5px;padding: 3px;font-size: 15px;">
+                    Description: {{ selectedItem.descrip }}
+                  </h6>
+                </div>
+                <div class="text-center" style="margin: 6px;position: relative;padding: 7px;margin-top: 46px;padding-bottom: -8px;">
+                  <div class="btn-group d-xl-flex align-content-center align-self-center m-auto justify-content-xl-center align-items-xl-center" role="group" style="width: 190.641px;margin: 4px;padding: 6px;">
+                    <button
+                      id="campApprove"
+                      class="btn btn-primary text-center"
+                      type="button"
+                      style="margin: 2px;border-radius: 7px;background: var(--bs-blue);color: var(--bs-modal-bg);border-width: 1px;border-color: #007a3d;"
+                      :disabled="approvedCamp"
+                      @click="campApprv"
+                    >
+                      Approve
+                    </button><button
+                      id="campReject"
+                      class="btn btn-primary text-center"
+                      type="button"
+                      style="color: rgb(25,25,25);background: var(--bs-gray-200);margin: 2px;border-radius: 7px;border: 1px none var(--bs-gray-500);"
+                      :disabled="rejectedCamp"
+                      @click="campRejct"
+                    >
+                      Reject
+                    </button>
                   </div>
                 </div>
               </div>
@@ -131,7 +117,22 @@
                   </div>
                   <div style="margin: 0px;padding: 10px;">
                     <div class="row">
-                      <div id="calendar" class="col" />
+                      <div
+                        id="calendar"
+                        class="col"
+                        :data-source="dataSource"
+                        :current-date="currentDate"
+                        :views="views"
+                        :height="500"
+                        :editing="false"
+                        :show-all-day-panel="false"
+                        :start-day-hour="7"
+                        start-date-expr="start.dateTime"
+                        end-date-expr="end.dateTime"
+                        text-expr="summary"
+                        time-zone="Philippine"
+                        current-view="week"
+                      />
                     </div>
                   </div>
                 </div>
@@ -147,134 +148,73 @@
           </div>
         </div>
       </footer>
-    </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up" /></a>
+    </div>
   </div>
 </template>
 
 <script>
-// eslint-disable-next-line import/default
 import firebase from 'firebase/app'
-import 'firebase/firestore'
-import 'firebase/database'
-// import 'google-auth-library'
-import 'googleapis'
-import * as FullCalendar from 'fullcalendar'
 
 import SideBar from './inc/SideBar.vue'
 import NavBar from './inc/NavBar.vue'
-
-firebase.initializeApp(firebase)
-const database = firebase.database()
-
-const { google } = require('googleapis')
-// const { OAuth2Client } = require('google-auth-library')
 
 export default {
   components: { SideBar, NavBar },
   data () {
     return {
-      showModal: false,
-      items: [],
       approvedCamp: false,
-      rejectedCamp: false
-    }
-  },
-  created () {
-    // Initialize Firebase = is in nuxt.config.js
-    const firebaseApp = firebase.initializeApp(process.env.firebase)
+      rejectedCamp: false,
+      // campaign: [],
+      /**
+       * campReq: [
+        { id: '01', title: 'Campaign 2', location: 'Cebu City', beneficiary: 'Ben', scheduleStart: 'MM-DD-YYYY', scheduleEnd: 'MM-DD-YYYY', descrip: 'Campaign descript', campStatus: 'Approved', reqBy: 'Email of the sender' },
+        { id: '02', title: 'Campaign 3', location: 'Mandaue City', beneficiary: 'Ben', scheduleStart: 'MM-DD-YYYY', scheduleEnd: 'MM-DD-YYYY', descrip: 'Campaign descript', campStatus: 'Submitted', reqBy: 'Email of the sender' }
+      ],
+       */
+      selectedItem: null,
 
-    // Get the data from the 'items' collection in Firestore
-    const firestore = firebaseApp.firestore()
-    firestore.collection('items').get()
-      .then((querySnapshot) => {
-        // Map the data to an array of objects
-        this.items = querySnapshot.docs.map(doc => doc.data())
-      })
+      views: ['day', 'week', 'month'],
+      currentDate: new Date(2023, 1, 1)
+    }
   },
   methods: {
-    openModal () {
-      this.showModal = true
-      // Select the modal using the $refs property in Vue.js
-      const modal = this.$refs.modal
-      // Open the modal
-      modal.style.display = 'block'
-    },
-    closeModal () {
-      this.showModal = false
-    },
-    async campApprv () {
-      this.approvedCamp = true
-      const database = firebase.database()
-      // const campReqId = this.item.campReqId
-      await database.ref(this.item.campReqId.update({
-      //  this.item.campReqStat = 'Approved',
-        status: this.item.campApprove = true
-      }))
-    },
-    async campRejct () {
-      this.rejectedCamp = true
-      const database = firebase.database()
-      // const campReqId = this.item.campReqId
-      await database.ref(this.item.campReqId.update({
-        status: this.item.campReject = true
-      }))
-    },
-    mounted () {
-      const GoogleAuth = require('google-auth-library')
-      // Authenticate with the Google Calendar API
-      const auth = new GoogleAuth({
-        keyFile: '/path/to/keyfile.json',
-        scopes: ['https://www.googleapis.com/auth/calendar']
+    readFromFirestore ({ app }) {
+    /**
+     * const campaignRef = firebase.database().ref('Campaign')
+    const snapshot = await campaignRef.once('value')
+    const campReq = snapshot.val()
+    return { campReq }
+     */
+      this.campReq = []
+      firebase.collection('Campaign').get().then((querySnapShot) => {
+        querySnapShot.forEach((doc) => {
+          this.campReq.push({
+            id: doc.id,
+            title: doc.data().campTitle,
+            descrip: doc.data().campDescrip,
+            location: doc.data().campLoctn,
+            beneficiary: doc.data().campBenf,
+            campStatus: doc.data().campStatus,
+            schedStart: doc.data().campSchedStart,
+            scheduleEnd: doc.data().campSchedEnd,
+            reqBy: doc.data().campSubmitBy
+          })
+        })
       })
-      /* const client = new OAuth2Client({
-        clientId: 'your-client-id',
-        clientSecret: 'your-client-secret'
-      }) */
+    },
+    selectItem (item) {
+      this.selectedItem = item
+    },
+    getData (_, requestOptions) {
+      const PUBLIC_KEY = '3bd57a4172aaaba7227b90b39115354a890a2ef9'
+      const CALENDAR_ID = 'service-account@foodthrift-4ad15.iam.gserviceaccount.com'
+      const dataUrl = ['https://www.googleapis.com/calendar/v3/calendars/',
+        CALENDAR_ID, '/events?key=', PUBLIC_KEY].join('')
 
-      // Initialize the calendar
-      const calendarEl = document.getElementById('calendar')
-      const calendar = google.calendar({ version: 'v3', auth })
-      FullCalendar.Calendar(calendarEl, {
-        // events data retrieved from the Google Calendar API
-        events: this.events
-      })
-
-      // Set up a listener for changes to the event data in the Firebase Realtime Database
-      database.ref('events').on('value', (snapshot) => {
-        this.events = snapshot.val()
-
-        // Delete all events on the calendar
-        const calendarId = 'primary' // replace with the calendar ID
-        const eventsOnCalendar = /** await */ calendar.events.list({ calendarId })
-        for (const event of eventsOnCalendar.data.items) {
-          // await
-          calendar.events.delete({ calendarId, eventId: event.id })
-        }
-        if (this.item.campReqId.campApprv === true) {
-          // Add the new events to the calendar
-          for (const event of 'events') {
-            // await
-            calendar.events.insert({
-              calendarId,
-              resource: {
-                summary: event.item.campReqId.CampTitle,
-                location: event.item.CampLocatn,
-                description: event.item.CampDescrip,
-                start: {
-                  date: event.item.CampSchedStart,
-                  timeZone: 'GMT+8'
-                },
-                end: {
-                  date: event.item.CampSchedEnd,
-                  timeZone: 'GMT+8'
-                }
-              }
-            })
-          }
-        }
-      })
+      return fetch(dataUrl, requestOptions).then(
+        response => response.json()
+      ).then(data => data.items)
     }
   }
-
 }
 </script>

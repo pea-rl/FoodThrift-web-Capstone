@@ -59,8 +59,7 @@
 </template>
 
 <script>
-// import 'nuxt-router'
-// import {firebase} from 'firebase/app'
+// import { firebase } from 'firebase/app'
 /**
  * import 'firebase/auth'
 import * as firebase from 'firebase'
@@ -83,29 +82,58 @@ firebase.auth().signInWithEmailAndPassword(email, password).then(() => {
   }
 })
  */
+// import 'firebase/auth'
+// import * as firebase from 'firebase'
 
 export default {
   // name: 'Login'
   data () {
     return {
-      snackbar: false,
+      email: '',
+      password: ''
+    /**
+      *  snackbar: false,
       snackbarText: 'NO error message',
       auth: {
-        email: '',
-        password: ''
       }
-    }
-  },
-  methods: {
-    login () {
-      const that = this
-      this.$fire.auth.signInWithEmailAndPassword(this.auth.email, this.auth.password.catch(function (error) {
-        that.snackbarText = error.message
-        that.snackbar = true
-      }).then((user) => {
-        this.$nuxt.$options.router.push({ path: '/dashboard' })
-      }))
+      */
     }
   }
+/**
+ *   methods: {
+    login () {
+      const formValidation = this.$refs.form.validate()
+
+      if (formValidation) {
+        this.$fire.auth
+          .signInWithEmailAndPassword(this.email, this.password)
+          .then((userCredential) => {
+            const authUser = {
+              uid: userCredential.user.uid,
+              email: userCredential.user.email
+            }
+            this.$store
+              .dispatch('onAuthStateChangedAction', {
+                authUser
+              })
+              .then(() => {
+                this.$router.replace('/profile')
+              })
+              .catch((error) => {
+                // console.log('User State error', error)
+                this.snackbar = true
+                this.errorMessage = error.message
+              })
+          })
+          .catch((error) => {
+            // console.log('Login error', error)
+            this.snackbar = true
+            this.errorMessage = error.message
+          })
+      }
+    }
+
+  }
+ */
 }
 </script>
